@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Awash Bank Customer Feedback</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons (e.g., copy icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Custom Awash Bank Colors */
+        :root {
+            --awash-blue: #003366; /* Dark Blue */
+            --awash-gold: #FFD700; /* Gold */
+            --awash-light-blue: #e0f2fe; /* Light Blue for backgrounds */
+            --awash-light-gold: #fffbe0; /* Light Gold for backgrounds */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--awash-light-blue); /* Overall light background */
+        }
+
+        /* Custom Tailwind Configuration for Awash Colors */
+        .tailwind-config-awash-colors {
+            display: none; /* Hide this element */
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        awashBlue: {
+                            DEFAULT: 'var(--awash-blue)',
+                            dark: '#002244', /* Slightly darker for hover */
+                            light: 'var(--awash-light-blue)',
+                        },
+                        awashGold: {
+                            DEFAULT: 'var(--awash-gold)',
+                            light: 'var(--awash-light-gold)',
+                        },
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl w-full bg-white shadow-2xl rounded-2xl p-8 md:p-10 border-t-8 border-awashBlue">
+        <h1 class="text-5xl font-extrabold text-center text-awashBlue mb-6 leading-tight">
+            Awash Bank Masha Branch<br> Customer Feedback
+        </h1>
+        <p class="text-lg text-center text-gray-600 mb-8">
+            Your insights help us serve you better.
+        </p>
+
+        <!-- User ID Display -->
+        <div id="userIdDisplay" class="text-sm text-center text-gray-600 mb-6 hidden">
+            Your User ID: <span id="currentUserId" class="font-mono bg-gray-100 px-2 py-1 rounded-md text-gray-800 break-all"></span>
+        </div>
+
+        <!-- Message Box -->
+        <div id="messageBox" class="p-3 mb-4 rounded-lg text-center hidden" role="alert"></div>
+
+        <!-- Feedback Submission Form -->
+        <section class="mb-12 border-b pb-8 border-gray-200">
+            <h2 class="text-3xl font-bold text-awashBlue mb-6">Submit Your Feedback</h2>
+            <form id="feedbackForm" class="space-y-6">
+                <div>
+                    <label for="serviceType" class="block text-gray-700 text-sm font-semibold mb-2">Service Type</label>
+                    <select id="serviceType" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-awashGold focus:border-awashGold transition duration-200" required>
+                        <option value="">Select a service...</option>
+                        <option value="Account Opening">Account Opening</option>
+                        <option value="Loan Application">Loan Application</option>
+                        <option value="Online Banking">Online Banking</option>
+                        <option value="Mobile Banking">Mobile Banking</option>
+                        <option value="ATM Services">ATM Services</option>
+                        <option value="Customer Service">Customer Service</option>
+                        <option value="Branch Experience">Branch Experience</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="rating" class="block text-gray-700 text-sm font-semibold mb-2">Rating (1-5, 5 being excellent)</label>
+                    <input type="range" id="rating" min="1" max="5" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-awash" oninput="this.nextElementSibling.value = this.value">
+                    <output class="block text-center text-gray-700 text-lg font-bold mt-2">5</output>
+                </div>
+                <div>
+                    <label for="comments" class="block text-gray-700 text-sm font-semibold mb-2">Comments</label>
+                    <textarea id="comments" rows="5" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-awashGold focus:border-awashGold transition duration-200" placeholder="Share your detailed feedback or suggestions..." required></textarea>
+                </div>
+                <button type="submit" id="submitButton" class="w-full bg-awashBlue text-white py-3 px-6 rounded-lg font-bold text-xl shadow-lg hover:bg-awashBlue-dark focus:outline-none focus:ring-2 focus:ring-awashGold focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105">
+                    Submit Feedback
+                </button>
+            </form>
+        </section>
+
+        <!-- Manager Access Section -->
+        <section class="mb-12 text-center">
+            <button id="showAdminLoginBtn" class="bg-gray-200 text-gray-800 py-2 px-5 rounded-lg font-semibold hover:bg-gray-300 transition duration-200 ease-in-out">
+                Manager Access
+            </button>
+            <div id="adminLoginSection" class="mt-4 p-6 bg-awashGold-light rounded-xl shadow-inner hidden">
+                <h3 class="text-2xl font-bold text-awashBlue mb-4">Manager Login</h3>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <input type="password" id="adminCodeInput" placeholder="Enter Admin Code" class="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-awashBlue focus:border-awashBlue transition duration-200 w-full sm:w-auto flex-grow">
+                    <button id="loginAdminBtn" class="bg-awashBlue text-white py-3 px-6 rounded-lg font-semibold hover:bg-awashBlue-dark focus:outline-none focus:ring-2 focus:ring-awashGold focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105">
+                        Login
+                    </button>
+                </div>
+                <p id="adminLoginMessage" class="text-red-600 mt-2 hidden"></p>
+            </div>
+        </section>
+
+        <!-- Admin Dashboard Section -->
+        <section id="adminDashboard" class="hidden">
+            <h2 class="text-3xl font-bold text-awashBlue mb-6 border-b pb-2">Feedback Analytics Dashboard</h2>
+
+            <!-- Analytics Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-blue-50 p-6 rounded-xl shadow-md border border-blue-100">
+                    <h3 class="text-xl font-bold text-blue-800 mb-2">Overall Metrics</h3>
+                    <p class="text-gray-700 text-base">Total Feedback Entries: <span id="totalFeedbackCount" class="font-semibold text-blue-600">0</span></p>
+                    <p class="text-gray-700 text-base">Average Rating: <span id="averageRating" class="font-semibold text-blue-600">N/A</span> / 5</p>
+                </div>
+                <div class="bg-green-50 p-6 rounded-xl shadow-md border border-green-100">
+                    <h3 class="text-xl font-bold text-green-800 mb-2">Feedback by Service Type</h3>
+                    <ul id="serviceTypeCountsList" class="list-disc list-inside text-gray-700">
+                        <li class="text-gray-600 text-sm">No feedback yet to categorize.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2 class="text-3xl font-bold text-awashBlue mb-6 border-b pb-2">All Feedback Entries</h2>
+            <div id="feedbackListContainer" class="grid gap-6 md:grid-cols-2">
+                <p class="text-gray-600 text-center py-8 col-span-full">No feedback submitted yet.</p>
+            </div>
+        </section>
+    </div>
+
+    <script type="module">
+        // Firebase SDK imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- FIREBASE CONFIGURATION FOR LOCAL USE (PRE-FILLED WITH YOUR DETAILS) ---
+        // This configuration is directly from your 'awashbankfeedback-fffdd' project.
+        // You should NOT need to change this unless your Firebase project details change.
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbUfVNgN5YbvqHZFDxjJZ0Tb7pAXkborU",
+            authDomain: "awashbankfeedback-fffdd.firebaseapp.com",
+            projectId: "awashbankfeedback-fffdd",
+            storageBucket: "awashbankfeedback-fffdd.firebasestorage.app",
+            messagingSenderId: "29768626197",
+            appId: "1:29768626197:web:8cc3640685c021b2f51e1c"
+        };
+
+        // This appId is used for the Firestore collection path.
+        // It MUST be the 'appId' value from your firebaseConfig.
+        const appId = firebaseConfig.appId;
+
+        // For local execution, we don't have a custom token from Canvas, so set it to null.
+        // The app will then sign in anonymously.
+        const initialAuthToken = null;
+        // --- END OF LOCAL FIREBASE CONFIGURATION ---
+
+
+        let app;
+        let db;
+        let auth;
+        let currentUserId = null; // This will hold the authenticated user's ID
+        const ADMIN_CODE = "awashadmin"; // Simple admin code for demonstration
+
+        // DOM Elements
+        const messageBox = document.getElementById('messageBox');
+        const feedbackForm = document.getElementById('feedbackForm');
+        const serviceTypeInput = document.getElementById('serviceType');
+        const ratingInput = document.getElementById('rating');
+        const commentsInput = document.getElementById('comments');
+        const submitButton = document.getElementById('submitButton');
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const currentUserIdSpan = document.getElementById('currentUserId');
+
+        const showAdminLoginBtn = document.getElementById('showAdminLoginBtn');
+        const adminLoginSection = document.getElementById('adminLoginSection');
+        const adminCodeInput = document.getElementById('adminCodeInput');
+        const loginAdminBtn = document.getElementById('loginAdminBtn');
+        const adminLoginMessage = document.getElementById('adminLoginMessage');
+        const adminDashboard = document.getElementById('adminDashboard');
+
+        const totalFeedbackCountSpan = document.getElementById('totalFeedbackCount');
+        const averageRatingSpan = document.getElementById('averageRating');
+        const serviceTypeCountsList = document.getElementById('serviceTypeCountsList');
+        const feedbackListContainer = document.getElementById('feedbackListContainer');
+
+        // --- Utility Functions ---
+
+        /**
+         * Displays a message in the message box.
+         * @param {string} message - The message to display.
+         * @param {boolean} isSuccess - True if it's a success message, false for error.
+         */
+        function showMessage(message, isSuccess) {
+            messageBox.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700');
+            if (isSuccess) {
+                messageBox.classList.add('bg-green-100', 'text-green-700');
+            } else {
+                messageBox.classList.add('bg-red-100', 'text-red-700');
+            }
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 5000); // Hide after 5 seconds
+        }
+
+        /**
+         * Copies text to the clipboard.
+         * @param {string} text - The text to copy.
+         */
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed'; // Prevent scrolling to bottom
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showMessage('Copied to clipboard!', true);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                showMessage('Failed to copy text. Please copy manually.', false);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        // --- Firebase Initialization ---
+        async function initializeFirebase() {
+            console.log("1. initializeFirebase called.");
+            try {
+                // For local use, firebaseConfig is directly defined above.
+                // We check if it's properly populated.
+                if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId || !firebaseConfig.appId) {
+                    console.error("ERROR: Firebase configuration is incomplete. Please ensure all required fields (apiKey, authDomain, projectId, appId) are correctly provided in 'firebaseConfig'.");
+                    showMessage("Firebase configuration is incomplete. Please check the script.", false);
+                    return;
+                }
+                console.log("2. Firebase config successfully obtained and validated.");
+
+                app = initializeApp(firebaseConfig);
+                console.log("3. Firebase app initialized.");
+                db = getFirestore(app);
+                console.log("4. Firestore initialized.");
+                auth = getAuth(app);
+                console.log("5. Auth initialized.");
+
+                // Authenticate user (will use anonymous sign-in as initialAuthToken is null for local use)
+                console.log("6. Initial auth token status:", initialAuthToken ? "present (from Canvas)" : "not present (local), will use anonymous sign-in");
+
+                if (initialAuthToken) {
+                    console.log("7. Attempting signInWithCustomToken...");
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    console.log("8. signInWithCustomToken successful.");
+                } else {
+                    console.log("7. Attempting signInAnonymously...");
+                    await signInAnonymously(auth);
+                    console.log("8. signInAnonymously successful.");
+                }
+
+                // Listen for auth state changes
+                onAuthStateChanged(auth, (user) => {
+                    console.log("9. onAuthStateChanged triggered. User object:", user);
+                    if (user) {
+                        currentUserId = user.uid;
+                        // Ensure the elements exist before trying to modify them
+                        if (currentUserIdSpan && userIdDisplay) {
+                            currentUserIdSpan.textContent = currentUserId;
+                            userIdDisplay.classList.remove('hidden'); // Make the User ID display visible
+                            console.log("10. User authenticated. User ID displayed:", currentUserId);
+                        } else {
+                            console.error("ERROR: User ID display elements not found in DOM!");
+                        }
+                        // Start listening for feedback once authenticated
+                        listenForFeedback();
+                    } else {
+                        console.log("10. User not authenticated, attempting anonymous sign-in (if not already).");
+                        signInAnonymously(auth).then((cred) => {
+                            currentUserId = cred.user.uid;
+                            // Ensure the elements exist before trying to modify them
+                            if (currentUserIdSpan && userIdDisplay) {
+                                currentUserIdSpan.textContent = currentUserId;
+                                userIdDisplay.classList.remove('hidden'); // Make the User ID display visible
+                                console.log("11. Signed in anonymously. User ID displayed:", currentUserId);
+                            } else {
+                                console.error("ERROR: User ID display elements not found in DOM after anonymous sign-in!");
+                            }
+                            listenForFeedback();
+                        }).catch((err) => {
+                            console.error("ERROR: Failed to sign in anonymously:", err);
+                            showMessage("Failed to sign in anonymously.", false);
+                        });
+                    }
+                });
+
+            } catch (e) {
+                console.error("FATAL ERROR during Firebase initialization (outer catch):", e);
+                showMessage(`Failed to initialize application: ${e.message}`, false);
+            }
+        }
+
+        // --- Feedback Submission ---
+        feedbackForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitButton.disabled = true;
+            submitButton.textContent = 'Submitting...';
+            console.log("Submission initiated.");
+
+            if (!db || !currentUserId) {
+                showMessage("Application not ready. Please wait or refresh.", false);
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Feedback';
+                console.warn("Submission aborted: db or userId not ready.");
+                return;
+            }
+
+            const serviceType = serviceTypeInput.value;
+            const rating = parseInt(ratingInput.value);
+            const comments = commentsInput.value.trim();
+
+            if (!serviceType || !comments || rating < 1 || rating > 5) {
+                showMessage("Please fill in all fields and provide a valid rating (1-5).", false);
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Feedback';
+                console.warn("Submission aborted: form validation failed.");
+                return;
+            }
+
+            try {
+                console.log("Attempting to add document to Firestore...");
+                // Use the appId defined at the top of the script
+                await addDoc(collection(db, `artifacts/${appId}/public/data/customerFeedback`), {
+                    serviceType,
+                    rating,
+                    comments,
+                    submittedBy: currentUserId,
+                    timestamp: serverTimestamp(),
+                });
+                showMessage("Feedback submitted successfully!", true);
+                feedbackForm.reset(); // Clear form
+                ratingInput.value = 5; // Reset range input visual
+                ratingInput.nextElementSibling.value = 5;
+                console.log("Document added successfully.");
+            } catch (e) {
+                console.error("ERROR adding document to Firestore: ", e);
+                showMessage(`Failed to submit feedback: ${e.message}`, false);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Feedback';
+            }
+        });
+
+        // --- Real-time Feedback Listener & Display ---
+        function listenForFeedback() {
+            if (!db) {
+                console.warn("Firestore not initialized, cannot listen for feedback. (listenForFeedback called without db)");
+                return;
+            }
+            console.log("Starting Firestore listener for feedback...");
+
+            // Use the appId defined at the top of the script
+            const feedbackCollectionRef = collection(db, `artifacts/${appId}/public/data/customerFeedback`);
+            const q = query(feedbackCollectionRef);
+
+            onSnapshot(q, (snapshot) => {
+                console.log("Firestore snapshot received. Number of docs:", snapshot.docs.length);
+                const fetchedFeedback = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                // Sort by timestamp in JavaScript, as orderBy is avoided for Canvas environment
+                fetchedFeedback.sort((a, b) => (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0));
+
+                updateFeedbackDisplays(fetchedFeedback);
+            }, (err) => {
+                console.error("ERROR fetching feedback from Firestore (onSnapshot):", err);
+                showMessage("Failed to load feedback. Please try again.", false);
+            });
+        }
+
+        /**
+         * Updates the feedback list and analytics dashboard.
+         * @param {Array} feedbackList - Array of feedback objects.
+         */
+        function updateFeedbackDisplays(feedbackList) {
+            // Update Analytics Summary
+            const totalFeedback = feedbackList.length;
+            totalFeedbackCountSpan.textContent = totalFeedback;
+
+            const averageRating = totalFeedback > 0 ? (feedbackList.reduce((sum, f) => sum + f.rating, 0) / totalFeedback).toFixed(2) : 'N/A';
+            averageRatingSpan.textContent = averageRating;
+
+            const serviceTypeCounts = feedbackList.reduce((acc, f) => {
+                acc[f.serviceType] = (acc[f.serviceType] || 0) + 1;
+                return acc;
+            }, {});
+
+            serviceTypeCountsList.innerHTML = ''; // Clear previous list
+            if (Object.keys(serviceTypeCounts).length === 0) {
+                serviceTypeCountsList.innerHTML = '<li class="text-gray-600 text-sm">No feedback yet to categorize.</li>';
+            } else {
+                for (const [type, count] of Object.entries(serviceTypeCounts)) {
+                    const li = document.createElement('li');
+                    li.className = 'text-base';
+                    li.innerHTML = `${type}: <span class="font-semibold text-green-600">${count}</span> entries`;
+                    serviceTypeCountsList.appendChild(li);
+                }
+            }
+
+            // Update All Feedback Entries (for Admin Dashboard)
+            feedbackListContainer.innerHTML = ''; // Clear previous entries
+            if (totalFeedback === 0) {
+                feedbackListContainer.innerHTML = '<p class="text-gray-600 text-center py-8 col-span-full">No feedback submitted yet.</p>';
+            } else {
+                feedbackList.forEach(feedback => {
+                    const feedbackCard = document.createElement('div');
+                    feedbackCard.className = 'bg-awashGold-light p-6 rounded-xl shadow-md border border-awashGold hover:shadow-lg transition duration-300 ease-in-out';
+                    feedbackCard.innerHTML = `
+                        <h3 class="text-xl font-bold text-awashBlue mb-2">${feedback.serviceType}</h3>
+                        <p class="text-gray-700 text-sm mb-3">Rating: <span class="font-semibold text-awashBlue">${feedback.rating} / 5</span></p>
+                        <p class="text-gray-700 text-sm mb-3">${feedback.comments}</p>
+                        <div class="text-xs text-gray-500 mt-4 flex justify-between items-center">
+                            <div>
+                                <p>Submitted by: <span class="font-mono">${feedback.submittedBy.substring(0, 8)}...</span></p>
+                                ${feedback.timestamp ? `<p>On: ${new Date(feedback.timestamp.toDate()).toLocaleString()}</p>` : ''}
+                            </div>
+                            <button class="copy-btn bg-awashBlue text-white p-2 rounded-full text-sm hover:bg-awashBlue-dark transition duration-200" data-comments="${escapeHtml(feedback.comments)}">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                    `;
+                    feedbackListContainer.appendChild(feedbackCard);
+                });
+
+                // Add event listeners for copy buttons
+                document.querySelectorAll('.copy-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const commentsToCopy = e.currentTarget.dataset.comments;
+                        copyToClipboard(commentsToCopy);
+                    });
+                });
+            }
+        }
+
+        // Helper to escape HTML for data attributes
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // --- Admin Login Logic ---
+        showAdminLoginBtn.addEventListener('click', () => {
+            adminLoginSection.classList.toggle('hidden');
+            adminLoginMessage.classList.add('hidden'); // Hide any previous messages
+            adminCodeInput.value = ''; // Clear input
+        });
+
+        loginAdminBtn.addEventListener('click', () => {
+            const enteredCode = adminCodeInput.value;
+            if (enteredCode === ADMIN_CODE) {
+                adminDashboard.classList.remove('hidden');
+                adminLoginSection.classList.add('hidden');
+                showAdminLoginBtn.classList.add('hidden'); // Hide manager access button once logged in
+                adminLoginMessage.classList.add('hidden');
+                showMessage("Manager dashboard unlocked!", true);
+            } else {
+                adminLoginMessage.textContent = "Incorrect code. Please try again.";
+                adminLoginMessage.classList.remove('hidden');
+                showMessage("Incorrect admin code.", false);
+            }
+        });
+
+        // Initialize Firebase when the window loads
+        window.onload = initializeFirebase;
+    </script>
+</body>
+</html>
+
